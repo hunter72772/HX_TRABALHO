@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Física Interativo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background-color:#000;color:#fff;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
+
+header{font-size:3em;font-weight:bold;position:absolute;top:-100px;opacity:0;transition:all 1s ease-out;text-align:center;}
+#group-names{font-size:2em;text-align:center;margin-top:150px;opacity:0;transform: translateY(50px);transition:all 1s ease-out;}
+#enter-btn{margin-top:20px;padding:15px 30px;font-size:1.2em;border:2px solid #fff;background:transparent;color:#fff;cursor:pointer;border-radius:10px;opacity:0.3;pointer-events:none;transition:opacity 0.5s ease;position:relative;}
+#enter-btn.active{opacity:1;pointer-events:auto;transition:all 0.3s ease;}
+#exit-btn{display:none;position:absolute;bottom:50px;padding:15px 30px;font-size:1.2em;border:2px solid #fff;background:transparent;color:#fff;cursor:pointer;border-radius:10px;opacity:0;transition:opacity 0.5s ease;}
+#fullscreen-btn{display:none;margin-top:10px;padding:10px 20px;font-size:1em;border-radius:8px;border:2px solid #fff;background:transparent;color:#fff;cursor:pointer;}
+
+.slide-container{display:none;position:relative;width:80%;max-width:900px;height:450px;margin-top:20px;overflow:hidden;border-radius:10px;border:2px solid #fff;background-color:#111;}
+.slide{position:absolute;width:100%;height:100%;opacity:0;transition:opacity 1s ease;display:flex;align-items:center;justify-content:center;}
+.slide.active{opacity:1;}
+
+.fade-in-up{animation:fadeUp 1s forwards;}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(50px);}100%{opacity:1;transform:translateY(0);}}
+
+.stars-container{display:none;margin-top:20px;text-align:center;position:relative;}
+.star{display:inline-block;margin:10px;width:50px;height:50px;border:2px solid #fff;border-radius:50%;cursor:pointer;transition:all 0.5s;line-height:50px;font-weight:bold;font-size:1.2em;}
+.star.animate{animation:starPop 0.5s forwards;}
+@keyframes starPop{0%{transform:scale(0);}50%{transform:scale(1.5);}100%{transform:scale(1);}}
+#note-title{font-size:2em;margin-bottom:20px;opacity:0;transition:opacity 1s;}
+
+#credits{
+  display:none;
+  position:absolute;
+  top:100%;
+  width:100%;
+  text-align:center;
+  font-size:1.8em;
+  line-height:2em;
+}
+@keyframes scrollCredits{0%{top:100%;}100%{top:-100%;}}
+</style>
+</head>
+<body>
+
+<header id="header">Física</header>
+<div id="group-names">Grupo A, Grupo B, Grupo C</div>
+<button id="enter-btn">Entrar</button>
+<button id="exit-btn">Sair</button>
+<button id="fullscreen-btn">Tela Cheia</button>
+
+<div class="slide-container" id="slide-container">
+  <!-- Slides -->
+  <div class="slide active">
+    <img src="https://picsum.photos/id/1015/900/450" alt="Slide 1" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+  </div>
+  <div class="slide">
+    <img src="https://picsum.photos/id/1016/900/450" alt="Slide 2" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+  </div>
+  <div class="slide">
+    <img src="https://picsum.photos/id/1018/900/450" alt="Slide 3" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">
+  </div>
+
+  <!-- Botões de navegação -->
+  <button id="prev-slide" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:2em;padding:5px 10px;cursor:pointer;">&#10094;</button>
+  <button id="next-slide" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.2);border:none;color:#fff;font-size:2em;padding:5px 10px;cursor:pointer;">&#10095;</button>
+</div>
+
+<div class="stars-container" id="stars-container">
+  <div id="note-title">Nota</div>
+  <div id="stars">
+    <span class="star" data-value="1">1</span>
+    <span class="star" data-value="2">2</span>
+    <span class="star" data-value="3">3</span>
+    <span class="star" data-value="4">4</span>
+    <span class="star" data-value="5">5</span>
+    <span class="star" data-value="6">6</span>
+    <span class="star" data-value="7">7</span>
+    <span class="star" data-value="8">8</span>
+    <span class="star" data-value="9">9</span>
+    <span class="star" data-value="10">10</span>
+  </div>
+</div>
+
+<div id="credits">
+  <div>Créditos do Projeto</div>
+  <div>Desenvolvido por: Equipe Física</div>
+  <div>Aluno 1</div>
+  <div>Aluno 2</div>
+  <div>Aluno 3</div>
+  <div>Aluno 4</div>
+  <div>Aluno 5</div>
+  <div>Aluno 6</div>
+  <div>Aluno 7</div>
+  <div>Aluno 8</div>
+  <div>Aluno 9</div>
+  <div>Aluno 10</div>
+  <div>Aluno 11</div>
+  <div>Aluno 12</div>
+  <div>Aluno 13</div>
+  <div>Aluno 14</div>
+</div>
+
+<script>
+const header=document.getElementById('header');
+const groupNames=document.getElementById('group-names');
+const enterBtn=document.getElementById('enter-btn');
+const exitBtn=document.getElementById('exit-btn');
+const fullscreenBtn=document.getElementById('fullscreen-btn');
+const slideContainer=document.getElementById('slide-container');
+const starsContainer=document.getElementById('stars-container');
+const noteTitle=document.getElementById('note-title');
+const credits=document.getElementById('credits');
+
+const slides=document.querySelectorAll('.slide');
+let currentSlide=0;
+
+// Entrada inicial
+window.addEventListener('load',()=>{
+  setTimeout(()=>{header.style.top='50px';header.style.opacity='1';},500);
+  setTimeout(()=>{
+    groupNames.classList.add('fade-in-up');
+    setTimeout(()=>{enterBtn.classList.add('active');},1000);
+  },1500);
+});
+
+// Botão Entrar
+enterBtn.addEventListener('click',()=>{
+  slideContainer.style.display='block';
+  exitBtn.style.display='block';
+  exitBtn.style.opacity=1;
+  fullscreenBtn.style.display='block';
+  enterBtn.style.display='none';
+});
+
+// Botão Tela Cheia
+fullscreenBtn.addEventListener('click', ()=>{
+  if (!document.fullscreenElement) {
+    slideContainer.requestFullscreen().catch(err => alert(`Erro: ${err.message}`));
+  } else {
+    document.exitFullscreen();
+  }
+});
+
+// Navegação manual
+const prevBtn = document.getElementById('prev-slide');
+const nextBtn = document.getElementById('next-slide');
+
+prevBtn.addEventListener('click', ()=>{
+  slides[currentSlide].classList.remove('active');
+  currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+  slides[currentSlide].classList.add('active');
+});
+
+nextBtn.addEventListener('click', ()=>{
+  slides[currentSlide].classList.remove('active');
+  currentSlide = (currentSlide + 1) % slides.length;
+  slides[currentSlide].classList.add('active');
+});
+
+// Botão Sair
+exitBtn.addEventListener('click',()=>{
+  slideContainer.style.display='none';
+  exitBtn.style.display='none';
+  fullscreenBtn.style.display='none';
+  
+  // Esconder título e grupos
+  header.style.opacity=0;
+  groupNames.style.opacity=0;
+
+  starsContainer.style.display='block';
+  noteTitle.style.opacity=1;
+
+  const stars=document.querySelectorAll('.star');
+  stars.forEach(s=>{
+    s.style.pointerEvents='none';
+    s.classList.add('animate');
+  });
+
+  setTimeout(()=>{
+    stars.forEach(s=>{
+      s.textContent='10';
+      s.style.pointerEvents='auto';
+    });
+  },2000);
+});
+
+// Avaliação: clique nas estrelas
+document.querySelectorAll('.star').forEach(s=>{
+  s.addEventListener('click',()=>{
+    starsContainer.querySelectorAll('.star').forEach(star=>{
+      star.style.transform="translateY(-100px)";
+      star.style.opacity="0";
+    });
+    noteTitle.style.opacity=0;
+    setTimeout(()=>{
+      starsContainer.style.display='none';
+      setTimeout(()=>{
+        startCreditsLoop(); // créditos em loop
+        // Durante créditos, esconder nomes dos grupos e título
+        groupNames.style.display='none';
+        header.style.display='none';
+      },1000);
+    },1000);
+  });
+});
+
+// Créditos em loop
+function startCreditsLoop(){
+  credits.style.display='block';
+  credits.style.top='100%';
+  credits.style.animation='scrollCredits 12s linear forwards';
+  credits.addEventListener('animationend',()=>{
+    credits.style.animation='';
+    setTimeout(startCreditsLoop,500);
+  },{once:true});
+}
+
+// Bloquear clique direito e F12
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{if(e.key==="F12") e.preventDefault();});
+</script>
+</body>
+</html>
